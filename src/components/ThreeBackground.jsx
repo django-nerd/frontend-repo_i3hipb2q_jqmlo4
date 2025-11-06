@@ -1,8 +1,8 @@
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
-function Particles({ count = 1400 }) {
+function Particles({ count = 1200, additive = false, scaleMultiplier = 1, baseOpacity = 0.9 }) {
   const mesh = useRef();
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
@@ -36,9 +36,9 @@ function Particles({ count = 1400 }) {
 
   const scales = useMemo(() => {
     const arr = new Float32Array(count);
-    for (let i = 0; i < count; i++) arr[i] = Math.random() * 0.6 + 0.2;
+    for (let i = 0; i < count; i++) arr[i] = (Math.random() * 0.6 + 0.2) * scaleMultiplier;
     return arr;
-  }, [count]);
+  }, [count, scaleMultiplier]);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -60,7 +60,17 @@ function Particles({ count = 1400 }) {
   });
 
   const geometry = useMemo(() => new THREE.IcosahedronGeometry(0.06, 0), []);
-  const material = useMemo(() => new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9 }), []);
+  const material = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: baseOpacity,
+        blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+        depthWrite: !additive ? true : false,
+      }),
+    [additive, baseOpacity]
+  );
 
   return (
     <instancedMesh ref={mesh} args={[geometry, material, count]}>
@@ -110,14 +120,44 @@ function Aurora() {
   );
 }
 
+function CameraRig({ mouseRef }) {
+  const { camera } = useThree();
+  const target = useRef(new THREE.Vector3());
+  useFrame(() => {
+    const mx = mouseRef.current.x;
+    const my = mouseRef.current.y;
+    target.set(mx * 2.0, my * 1.2, camera.position.z);
+    camera.position.lerp(target, 0.05);
+    camera.lookAt(0, 0, 0);
+  });
+  return null;
+}
+
 export default function ThreeBackground() {
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handle = (e) => {
+      const x = (e.clientX / window.innerWidth) * 2 - 1; // -1..1
+      const y = (e.clientY / window.innerHeight) * 2 - 1; // -1..1
+      mouseRef.current.x = x;
+      mouseRef.current.y = -y; // invert Y for natural feel
+    };
+    window.addEventListener('mousemove', handle, { passive: true });
+    return () => window.removeEventListener('mousemove', handle);
+  }, []);
+
   return (
     <div className="pointer-events-none absolute inset-0">
       <Canvas camera={{ position: [0, 0, 12], fov: 60 }} dpr={[1, 2]}>
         <color attach="background" args={[0x000000]} />
         <fog attach="fog" args={[0x000000, 10, 120]} />
-        <Particles />
+        {/* Core particles */}
+        <Particles count={1000} additive={false} scaleMultiplier={1} baseOpacity={0.85} />
+        {/* Additive glow layer to simulate bloom */}
+        <Particles count={700} additive scaleMultiplier={1.8} baseOpacity={0.35} />
         <Aurora />
+        <CameraRig mouseRef={mouseRef} />
       </Canvas>
     </div>
   );
