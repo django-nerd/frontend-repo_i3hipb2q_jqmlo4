@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Spline from '@splinetool/react-spline';
+import ThreeBackground from './ThreeBackground';
 
 export default function Hero() {
   const { scrollY } = useScroll();
@@ -8,12 +9,12 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 via-white to-white dark:from-zinc-900 dark:via-zinc-950 dark:to-black" />
-
       <div className="absolute inset-0">
-        <Spline scene="https://prod.spline.design/4Zh-Q6DWWp5yPnQf/scene.splinecode" style={{ width: '100%', height: '100%' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white/80 dark:from-black/40 dark:via-black/20 dark:to-black/80 pointer-events-none" />
+        <Spline scene="https://prod.spline.design/7m4PRZ7kg6K1jPfF/scene.splinecode" style={{ width: '100%', height: '100%' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80 pointer-events-none" />
       </div>
+
+      <ThreeBackground />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div style={{ y, opacity }} className="py-28 sm:py-36 lg:py-44">
@@ -24,7 +25,7 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white drop-shadow-md"
             >
-              Supercharge your flow with
+              Ride the cosmic flow with
               <span className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-pink-400"> NeuraFlow</span>
             </motion.h1>
             <motion.p
@@ -33,7 +34,7 @@ export default function Hero() {
               transition={{ delay: 0.1, duration: 0.6 }}
               className="mt-6 text-lg text-zinc-200 max-w-2xl"
             >
-              Your AI productivity copilot that summarizes, plans, and automates your busywork—so you can focus on deep work.
+              A hyper-visual AI copilot built for focus. Automate, summarize, and plan—while your background goes full galaxy.
             </motion.p>
 
             <motion.div
