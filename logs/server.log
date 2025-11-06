@@ -3,9 +3,7 @@
 > vite
 
 
-  VITE v5.4.20  ready in 212 ms
+  VITE v5.4.20  ready in 241 ms
 
   ➜  Local:   http://localhost:3000/
   ➜  Network: http://172.20.12.143:3000/
-4:17:16 AM [vite] ✨ new dependencies optimized: @react-three/fiber, three
-4:17:16 AM [vite] ✨ optimized dependencies changed. reloading
